@@ -1,17 +1,17 @@
-import { GetStorage, SetStorage } from "./protocols"
+import { GetStorage, SetStorage } from './protocols';
 
 export class LocalStorageAdapter implements SetStorage, GetStorage {
-    set(key: string, value: object): void {
-        if (value) {
-            localStorage.setItem(key, JSON.stringify(value))
-        } else {
-            localStorage.removeItem(key)
-        }
+  set(key: string, value: object): void {
+    if (value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    } else {
+      localStorage.removeItem(key);
     }
+  }
 
-    get(key: string): any {
-        let local = localStorage.getItem(key);
+  get(key: string): any {
+    const local = localStorage.getItem(key);
 
-        return JSON.parse(local != null ? JSON.stringify(local) : JSON.parse(local!.toString()));
-    }
+    return JSON.parse(local != null ? JSON.stringify(local) : JSON.parse(local!.toString()));
+  }
 }

@@ -1,5 +1,4 @@
 export interface LoginModel {
-    login: String;
-    password: String;
+  login: String;
+  password: String;
 }
-
