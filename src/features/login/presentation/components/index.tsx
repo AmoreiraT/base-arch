@@ -2,29 +2,58 @@ import React, { useState } from 'react';
 
 import * as S from './styles';
 import logo from './../../../../res/images/png/logo-rc.png';
-import { LoginCommand } from './../../domain/commands/login-command';
-
-const FormLogin = (): JSX.Element => {
+import { Authentication, LoginCommand } from './../../domain/commands/login-command';
+import { LoginModel } from '../../model/login-model';
+import { LoginRepositoryInterface } from '../../domain/repository/login-repository-interface';
+type Props = {
+  authentication: LoginRepositoryInterface;
+};
+const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async function (e: React.SyntheticEvent): Promise<void> {
-    e.preventDefault();
-    let cmd: LoginCommand;
-    const data = await cmd!.repo.call(userName, password);
-
-    if (data.error) {
-      return alert(data.error);
-    }
-    console.log(data);
-    // const auth_ticket: string = data.data.auth_ticket;
+  const doLogin = async (): Promise<LoginModel> => {
+    var cmd: LoginCommand;
+    const data = await cmd!.repo.auth({
+      email: userName,
+      password: password
+    });
+    console.log(data.data);
+    return data.data;
   };
+
+  const handleSubmit = async (e: React.SyntheticEvent): Promise<LoginModel> => {
+    e.preventDefault();
+
+    const account = await authentication.auth({
+      email: userName,
+      password: password
+    });
+
+    console.log(account);
+    return account.data;
+  };
+
+  // const handleLogin = async function (e: React.SyntheticEvent): Promise<void> {
+  //   var cmd: LoginCommand;
+  //   cmd = new LoginCommand(cmd!.repo);
+
+  //   const data = await cmd.call({ user: userName, pass: password } as unknown as LoginModel);
+
+  //   if (data.hasError) {
+  //     return alert(data.message);
+  //   }
+  //   console.log(data);
+  //   e.preventDefault();
+
+  //   // const auth_ticket: string = data.data.auth_ticket;
+  // };
 
   return (
     <S.Container variant="elevation" elevation={5}>
       <S.Logo src={logo} />
       <S.TitleLogin variant="h5">Faça o login</S.TitleLogin>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={() => handleSubmit}>
         <S.ContainerField>
           <S.InputField
             type="text"

@@ -3,35 +3,37 @@ import { LoginRepositoryInterface } from '../domain/repository/login-repository-
 import { LoginModel } from '../model/login-model';
 import {
   HttpClient,
-  HttpRequest
+  HttpRequest,
+  HttpStatusCode
 } from '../../../core/infrastructure/http/protocols/protocols-http';
 import { AxiosHttpClient } from '../../../core/infrastructure/http';
+import { Authentication } from '../domain/commands/login-command';
+import { InvalidCredentialsError, UnexpectedError } from '../../../core/error';
+import { error } from 'console';
 
 export class LoginRepositoryImpl implements LoginRepositoryInterface {
-  async call(user: String, pass: String): Promise<ApiResult<LoginModel>> {
-    const url = process.env.REACT_APP_API_BASE_URL + 'Security/login';
-    const map = await new AxiosHttpClient()
-      .request({
-        url,
-        method: 'post',
-        body: {
-          user,
-          pass
-        },
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          mode: 'cors',
-          credentials: 'same-origin'
-        }
-      })
-      .then((response) => response.body.json())
-      .then((responseJson) => {
-        console.log('callURL', responseJson);
-        sessionStorage.setItem('AccessToken', responseJson.accessToken);
-        return responseJson;
-      });
-    const result = new ApiResult<LoginModel>('', '', map, false);
-    return result;
+  constructor(
+    private readonly url: string,
+    private readonly httpClient: HttpClient<LoginRepositoryImpl.Model>
+  ) {}
+
+  async auth(params: Authentication.Params): Promise<ApiResult<Authentication.Model>> {
+    const httpResponse = await this.httpClient.request({
+      url: this.url,
+      method: 'post',
+      body: params
+    });
+    switch (httpResponse.statusCode) {
+      case HttpStatusCode.ok:
+        return new ApiResult<Authentication.Model>('', '', httpResponse.body, false);
+      case HttpStatusCode.unauthorized:
+        throw new InvalidCredentialsError();
+      default:
+        throw new UnexpectedError();
+    }
   }
+}
+
+export namespace LoginRepositoryImpl {
+  export type Model = Authentication.Model;
 }

@@ -1,5 +1,5 @@
 import { ApiResult } from '../../../../core/model/api-result';
-import { LoginModel } from '../../model/login-model';
+import { Authentication } from '../commands/login-command';
 export interface LoginRepositoryInterface {
-  call: (user: String, pass: String) => Promise<ApiResult<LoginModel>>;
+  auth: (params: Authentication.Params) => Promise<ApiResult<Authentication.Model>>;
 }
