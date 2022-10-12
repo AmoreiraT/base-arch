@@ -6,10 +6,8 @@ import {
   HttpRequest,
   HttpStatusCode
 } from '../../../core/infrastructure/http/protocols/protocols-http';
-import { AxiosHttpClient } from '../../../core/infrastructure/http';
 import { Authentication } from '../domain/commands/login-command';
 import { InvalidCredentialsError, UnexpectedError } from '../../../core/error';
-import { error } from 'console';
 
 export class LoginRepositoryImpl implements LoginRepositoryInterface {
   constructor(

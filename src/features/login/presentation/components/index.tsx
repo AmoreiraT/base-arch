@@ -14,7 +14,7 @@ const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (): Promise<LoginModel> => {
+  const doLogin = async (): Promise<LoginModel> => {
     const cmd = new LoginCommand(authentication);
     const response = await cmd.call({
       username: userName,
@@ -28,7 +28,7 @@ const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
     <S.Container variant="elevation" elevation={5}>
       <S.Logo src={logo} />
       <S.TitleLogin variant="h5">Faça o login</S.TitleLogin>
-      <form onSubmit={() => handleSubmit}>
+      <form>
         <S.ContainerField>
           <S.InputField
             type="text"
@@ -57,7 +57,7 @@ const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
             }}
           />
         </S.ContainerField>
-        <IconButton onClick={handleSubmit}>Entrar</IconButton>
+        <IconButton onClick={doLogin}>Entrar</IconButton>
       </form>
     </S.Container>
   );
