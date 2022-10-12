@@ -33,7 +33,11 @@
     "@typescript-eslint/no-misused-promises": [
       "error",
       {
-        "checksConditionals": false
+        "checksConditionals": false,
+        "checksVoidReturn": {
+          "arguments": false,
+          "attributes": false
+        }
       }
     ],
     "no-unused-vars": "off",

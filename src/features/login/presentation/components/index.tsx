@@ -5,6 +5,8 @@ import logo from './../../../../res/images/png/logo-rc.png';
 import { Authentication, LoginCommand } from './../../domain/commands/login-command';
 import { LoginModel } from '../../model/login-model';
 import { LoginRepositoryInterface } from '../../domain/repository/login-repository-interface';
+import { LoginRepositoryImpl } from '../../data/login-repository-impl';
+import { IconButton } from '@mui/material';
 type Props = {
   authentication: LoginRepositoryInterface;
 };
@@ -12,42 +14,15 @@ const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
-  const doLogin = async (): Promise<LoginModel> => {
-    var cmd: LoginCommand;
-    const data = await cmd!.repo.auth({
-      email: userName,
+  const handleSubmit = async (): Promise<LoginModel> => {
+    const cmd = new LoginCommand(authentication);
+    const response = await cmd.call({
+      username: userName,
       password: password
     });
-    console.log(data.data);
-    return data.data;
+    console.log(response.data);
+    return response.data;
   };
-
-  const handleSubmit = async (e: React.SyntheticEvent): Promise<LoginModel> => {
-    e.preventDefault();
-
-    const account = await authentication.auth({
-      email: userName,
-      password: password
-    });
-
-    console.log(account);
-    return account.data;
-  };
-
-  // const handleLogin = async function (e: React.SyntheticEvent): Promise<void> {
-  //   var cmd: LoginCommand;
-  //   cmd = new LoginCommand(cmd!.repo);
-
-  //   const data = await cmd.call({ user: userName, pass: password } as unknown as LoginModel);
-
-  //   if (data.hasError) {
-  //     return alert(data.message);
-  //   }
-  //   console.log(data);
-  //   e.preventDefault();
-
-  //   // const auth_ticket: string = data.data.auth_ticket;
-  // };
 
   return (
     <S.Container variant="elevation" elevation={5}>
@@ -57,7 +32,6 @@ const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
         <S.ContainerField>
           <S.InputField
             type="text"
-            name="usuario"
             variant="outlined"
             id="outlined-basic"
             label="Usuário"
@@ -72,7 +46,6 @@ const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
         <S.ContainerField>
           <S.InputField
             type="password"
-            name="password"
             variant="outlined"
             id="outlined-basic"
             label="Senha"
@@ -84,9 +57,7 @@ const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
             }}
           />
         </S.ContainerField>
-        <S.ButtonEntrar variant="contained" type="submit">
-          Entrar
-        </S.ButtonEntrar>
+        <IconButton onClick={handleSubmit}>Entrar</IconButton>
       </form>
     </S.Container>
   );

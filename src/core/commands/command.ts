@@ -1,11 +1,11 @@
 export abstract class Command<Type, Params> {
-  abstract call(params: Params): CommandResult<Type>;
+  abstract call(params: Params): Promise<CommandResult<Type>>;
 }
 export class CommandResult<T> {
   message: String;
   exception: any;
-  data?: T;
-  constructor(message: String, exception: any, data?: T) {
+  data: T;
+  constructor(message: String, exception: any, data: T) {
     this.message = message;
     this.exception = exception;
     this.data = data;

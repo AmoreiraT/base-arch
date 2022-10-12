@@ -1,4 +1,4 @@
 export type LoginModel = {
-  login: String;
+  username: String;
   password: String;
 };

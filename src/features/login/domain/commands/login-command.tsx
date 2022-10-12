@@ -1,35 +1,29 @@
 import { Command, CommandResult } from '../../../../core/commands/command';
-import { LoginRepositoryImpl } from '../../data/login-repository-impl';
 import { LoginModel } from '../../model/login-model';
 import { LoginRepositoryInterface } from '../repository/login-repository-interface';
 
 export class LoginCommand extends Command<Authentication.Model, Authentication.Params> {
-  repo: LoginRepositoryImpl;
-  constructor(repo: LoginRepositoryImpl) {
+  repo: LoginRepositoryInterface;
+  constructor(repo: LoginRepositoryInterface) {
     super();
     this.repo = repo;
   }
 
-  call(params: Authentication.Params): CommandResult<Authentication.Model> {
-    var response;
+  async call(params: Authentication.Params): Promise<CommandResult<Authentication.Model>> {
+    var response: Authentication.Model;
+
     try {
-      const commandResult = new Promise<Authentication.Model>(async (resolve) => {
-        var result = await this.repo.auth(params);
-        resolve(result.data);
-      });
-      commandResult.then((result) => {
-        response = result;
-      });
-      return new CommandResult<LoginModel>('', '', response);
+      const commandResult = await this.repo.auth(params);
+      return new CommandResult<LoginModel>('', '', commandResult.data);
     } catch (err: any) {
-      return new CommandResult<LoginModel>(err, err);
+      return new CommandResult<LoginModel>(err, err, response!);
     }
   }
 }
 
 export namespace Authentication {
   export type Params = {
-    email: string;
+    username: string;
     password: string;
   };
 
