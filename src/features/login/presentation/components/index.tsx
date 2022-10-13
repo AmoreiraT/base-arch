@@ -1,26 +1,43 @@
-import React, { useState } from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
 import * as S from './styles';
 import logo from './../../../../res/images/png/logo-rc.png';
-import { Authentication, LoginCommand } from './../../domain/commands/login-command';
-import { LoginModel } from '../../model/login-model';
+import { LoginCommand } from './../../domain/commands/login-command';
 import { LoginRepositoryInterface } from '../../domain/repository/login-repository-interface';
-import { LoginRepositoryImpl } from '../../data/login-repository-impl';
 import { IconButton } from '@mui/material';
+import { AccountModel } from '../../model/account-model';
+import { useHistory } from 'react-router-dom';
+import { globalContext } from '../../../../core/store';
 type Props = {
   authentication: LoginRepositoryInterface;
 };
 const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
+  const history = useHistory();
+  const { globalState, dispatch } = useContext(globalContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const isDisabled = userName === '';
 
-  const doLogin = async (): Promise<LoginModel> => {
+  const fakeAuth = {
+    authenticate(callback: () => void) {
+      setTimeout(callback, 900);
+    }
+  };
+
+  const doLogin = async (): Promise<AccountModel> => {
+    setIsLoading(true);
     const cmd = new LoginCommand(authentication);
     const response = await cmd.call({
       username: userName,
-      password: password
+      password
     });
-    console.log(response.data);
+    fakeAuth.authenticate(() => {
+      dispatch({ type: 'SET_USER', payload: response.data });
+      dispatch({ type: 'AUTHENTICATE_USER', payload: true });
+    });
+    console.log(globalState.isUserAuthenticated);
+    console.log(globalState.loggedUser);
+    history.replace('/');
     return response.data;
   };
 

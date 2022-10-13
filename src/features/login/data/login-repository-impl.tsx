@@ -8,6 +8,12 @@ import {
 } from '../../../core/infrastructure/http/protocols/protocols-http';
 import { Authentication } from '../domain/commands/login-command';
 import { InvalidCredentialsError, UnexpectedError } from '../../../core/error';
+import { makeApiUrl } from '../../../core/infrastructure/http/factories/api-url-factory';
+import { makeAxiosHttpClient } from '../../../core/infrastructure/http/factories/axios-http-client-factory';
+import { AccountModel } from '../model/account-model';
+
+export const makeRemoteAuthentication = (): LoginRepositoryInterface =>
+  new LoginRepositoryImpl(makeApiUrl('Security/login'), makeAxiosHttpClient());
 
 export class LoginRepositoryImpl implements LoginRepositoryInterface {
   constructor(
@@ -33,5 +39,5 @@ export class LoginRepositoryImpl implements LoginRepositoryInterface {
 }
 
 export namespace LoginRepositoryImpl {
-  export type Model = Authentication.Model;
+  export type Model = AccountModel;
 }

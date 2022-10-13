@@ -1,3 +1,4 @@
 export const makeApiUrl = (path: string): string => {
-  return `https://apps.beelegal.com.br/rocha/${path}`;
+  const apiUrl: string = process.env.REACT_APP_API_BASE_URL ?? '';
+  return `${apiUrl}${path}`;
 };
