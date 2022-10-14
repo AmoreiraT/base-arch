@@ -6,7 +6,7 @@ import * as S from './styles';
 const Login = (): JSX.Element => {
   return (
     <S.Container>
-      <FormLogin authentication={makeRemoteAuthentication()} />
+      <FormLogin />
     </S.Container>
   );
 };

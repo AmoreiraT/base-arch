@@ -7,10 +7,9 @@ import { IconButton } from '@mui/material';
 import { AccountModel } from '../../model/account-model';
 import { useHistory } from 'react-router-dom';
 import { globalContext } from '../../../../core/store';
-type Props = {
-  authentication: LoginRepositoryInterface;
-};
-const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
+import { makeRemoteAuthentication } from '../../data/login-repository-impl';
+
+const FormLogin: React.FC = () => {
   const history = useHistory();
   const { globalState, dispatch } = useContext(globalContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,14 +25,14 @@ const FormLogin: React.FC<Props> = ({ authentication }: Props) => {
 
   const doLogin = async (): Promise<AccountModel> => {
     setIsLoading(true);
-    const cmd = new LoginCommand(authentication);
+    const cmd = new LoginCommand(makeRemoteAuthentication());
     const response = await cmd.call({
       username: userName,
       password
     });
     fakeAuth.authenticate(() => {
-      dispatch({ type: 'SET_USER', payload: response.data });
       dispatch({ type: 'AUTHENTICATE_USER', payload: true });
+      dispatch({ type: 'SET_USER', payload: response.data });
     });
     console.log(globalState.isUserAuthenticated);
     console.log(globalState.loggedUser);
