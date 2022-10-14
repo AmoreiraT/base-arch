@@ -10,6 +10,13 @@ import { makeLocalStorageAdapter } from '../infrastructure/cache/local-storage-a
 import Reducer from './reducer';
 import { ContextType, GlobalStateInterface } from './types';
 
+export const initialState: GlobalStateInterface = {
+  favoriteMovies: [],
+  isUserAuthenticated: false,
+  loggedUser: '',
+  persistenceType: 'sessionStorage'
+};
+
 export function GlobalStore({ children }: { children: ReactNode }): ReactElement {
   const [globalState, dispatch] = useReducer(Reducer, initializeState());
   const initialRenderGlobalState = useRef(true);
@@ -45,24 +52,14 @@ export function GlobalStore({ children }: { children: ReactNode }): ReactElement
     <globalContext.Provider value={{ globalState, dispatch }}>{children}</globalContext.Provider>
   );
 }
-
-export const globalContext = createContext({} as ContextType);
-
-export const initialState: GlobalStateInterface = {
-  favoriteMovies: [],
-  isUserAuthenticated: false,
-  loggedUser: '',
-  persistenceType: 'sessionStorage'
-};
+export const globalContext = createContext<ContextType>({} as any as ContextType);
 
 function initializeState() {
   if (typeof Storage !== 'undefined') {
+    console.log('is not undefined');
   } else {
     throw new Error('You need to enable Storage to run this app.');
   }
-
-  makeLocalStorageAdapter;
-
   const fromLocalStorage = JSON.parse(localStorage.getItem('globalState') as string);
   const fromSessionStorage = JSON.parse(sessionStorage.getItem('globalState') as string);
   return fromSessionStorage || fromLocalStorage || initialState;

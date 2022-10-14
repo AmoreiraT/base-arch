@@ -1,0 +1,32 @@
+.containerMain {
+  display: inline-flex;
+  flex-direction: column;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  background: #ffffff;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px;
+  height: 100%;
+  width: 100%;
+  background: #ffffff;
+  overflow-y: scroll;
+}
+
+.content::-webkit-scrollbar {
+  width: 12px;
+  height: 16px;
+  background: #ddf4fe;
+}
+.content::-webkit-scrollbar-thumb {
+  background: #1e4072;
+  border: 2px solid #ddf4fe;
+  border-radius: 8px;
+}

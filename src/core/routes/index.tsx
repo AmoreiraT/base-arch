@@ -1,6 +1,6 @@
-import { BrowserRouter, Route, Switch, useLocation } from 'react-router-dom';
-import DashBoard from '../../features/dashboard/presentation';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Login from '../../features/login/presentation';
+import MeuUniverso from '../../features/MeuUniverso/presentation';
 import PrivateRoute from './private-route';
 
 const AppRoutes: React.FC = () => {
@@ -12,7 +12,7 @@ const AppRoutes: React.FC = () => {
         </Route>
 
         <PrivateRoute exact path="/">
-          <DashBoard />
+          <MeuUniverso />
         </PrivateRoute>
       </Switch>
     </BrowserRouter>

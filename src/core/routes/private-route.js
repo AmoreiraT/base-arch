@@ -1,4 +1,4 @@
-import { FC, ReactElement, useContext } from 'react';
+import { useContext } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import Home from '../../features/home/presentation';
 import Login from '../../features/login/presentation';
