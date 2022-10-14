@@ -2,6 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import * as S from './styles';
 
 import { MoonLoader } from 'react-spinners';
+import { ProcessosAtivosCommand } from '../../domain/commands/processos-ativos-command';
+import { makeRemoteProcessos } from '../../data/processos-ativos-impl';
+import { ProcessosAtivosRepositoryInterface } from '../../domain/repository/processos-ativos-repository-interface';
+import { ProcessosAtivosModel } from '../../model/processos-ativos-model';
 
 // import { apiEPM } from "../../../../services/api/epm";
 
@@ -22,7 +26,7 @@ const ProcessosAtivos = () => {
   //   {FASE_PROCESSUAL: 'Teste 7', Qtd: 700},
   //   {FASE_PROCESSUAL: 'Teste 8', Qtd: 800}
   // ]
-  const [processActives, setProcessActives] = useState<Processos[]>([]);
+  const [processActives, setProcessActives] = useState<ProcessosAtivosModel>();
   const [totalProcess, setTotalProcess] = useState<number>(0);
 
   const sumQtdprocess = (total: number, item: Processos) => {
@@ -33,23 +37,23 @@ const ProcessosAtivos = () => {
     return (qtd * 100) / totalProcess;
   };
 
-  const initProcess = useCallback(async () => {
-    // const { status, data } = await apiEPM.getProcess("FASE_PROCESSUAL:FASE");
-    // if (status !== 200) throw new Error();
-    // if (data.error) {
-    //   return console.log(data.error.message);
-    // }
-    // setProcessActives(data.list);
+  const initProcess: () => Promise<void> = useCallback(async () => {
+    const processosRepo: ProcessosAtivosRepositoryInterface = makeRemoteProcessos();
+    const cmd = new ProcessosAtivosCommand(processosRepo);
+    const response = await cmd.call('?qid=FASE_PROCESSUAL:FASE');
+    console.log(response.data);
+    setProcessActives(response.data);
   }, []);
 
   useEffect(() => {
-    if (processActives.length === 0) {
+    initProcess();
+    if (processActives?.list.length === 0) {
       initProcess();
     }
   }, [initProcess, processActives]);
 
   useEffect(() => {
-    setTotalProcess(processActives.reduce(sumQtdprocess, 0));
+    // setTotalProcess(processActives?.list.reduce(sumQtdprocess, 0));
   }, [processActives]);
 
   return (
@@ -58,19 +62,19 @@ const ProcessosAtivos = () => {
         <S.TotalProcessos>{totalProcess}</S.TotalProcessos>
         <S.TitleCard>Processos Ativos</S.TitleCard>
       </S.TitleCardContainer>
-      {processActives.length > 0 ? (
+      {(processActives?.rowCount as number) > 0 ? (
         <S.ListProcessosUl>
-          {processActives.map((processo) => {
+          {processActives?.list.map((processo) => {
             return (
-              <S.ListProcessosLi key={processo.FASE_PROCESSUAL}>
+              <S.ListProcessosLi key={processo.FASE}>
                 <S.ListItemProcesso>
                   <S.ListItemProcessoInfo>
-                    <S.ListItemTitleProcesso>{processo.FASE_PROCESSUAL}</S.ListItemTitleProcesso>
+                    <S.ListItemTitleProcesso>{processo.FASE}</S.ListItemTitleProcesso>
                     <S.ListItemPorcentagemProcesso>
-                      {calcularPorcentagem(processo.Qtd).toFixed(0)}%
+                      {processo.PERCENTUAL.toString()}%
                     </S.ListItemPorcentagemProcesso>
                   </S.ListItemProcessoInfo>
-                  <S.Chart percentual={calcularPorcentagem(processo.Qtd).toFixed(0)} />
+                  <S.Chart percentual={processo.PERCENTUAL.toString()} />
                   <S.BackgroundChart />
                 </S.ListItemProcesso>
               </S.ListProcessosLi>

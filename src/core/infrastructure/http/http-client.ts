@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 import { HttpClient, HttpRequest, HttpResponse } from './protocols';
 import axios, { AxiosResponse } from 'axios';
 
